@@ -1,8 +1,8 @@
-# Lab 2 Option 3: Adder
+# Sniffer
 
 ## Team
 
- - [Volodymyr Chernetskyi](https://github.com/chernetskyi)
+ - [Igor Babin](https://github.com/igor185)
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Dependencies (such as development libraries) can be found in the [dependencies f
 
 1. Clone the project.
     ```bash
-    git clone git@github.com:chernetskyi/cpp-template.git
+    git clone git@github.com:igor185/sniffer.git
     ```
 2. Install required packages.
 
@@ -30,16 +30,17 @@ Dependencies (such as development libraries) can be found in the [dependencies f
    Use Conan on Windows.
 3. Build.
     ```bash
-    cmake -Bbuild
-    cmake --build build
+   mkdir build && cd build
+    cmake -G"Unik Makefiles" ../
+    cmake --build .
     ```
 
 ## Usage
 
 ```bash
-add [a] [b]
+sudo ./sniffer
 ```
 
-If less than two numbers provided, zeroes are used instead. If more - an error occurs.
+Program to catch and analyze network traffic
 
 Help flags `-h`/`--help` support is available.
