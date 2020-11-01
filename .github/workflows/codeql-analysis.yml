@@ -20,7 +20,7 @@ jobs:
       with:
         fetch-depth: 2
 
-    - run: git checkout HEAD^2
+    - run: git checkout HEAD~2
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
