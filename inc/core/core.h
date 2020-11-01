@@ -7,6 +7,7 @@
 #include <string>
 #include <net/ethernet.h>
 #include <netinet/ether.h>
+#include <netinet/if_ether.h>
 
 /* tcpdump header (ether.h) defines  */
 #ifndef ETHER_HDRLEN
