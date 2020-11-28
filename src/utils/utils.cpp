@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <regex>
+#include <unistd.h>
 
 #include "util/utils.h"
 #include "IO/IO.h"
@@ -18,7 +19,6 @@ int utils::to_number(const std::string &s) {
 
 core::config utils::cli_parser(int argc, char **argv) {
     core::config config = {};
-
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             IO::print_help();
@@ -29,7 +29,7 @@ core::config utils::cli_parser(int argc, char **argv) {
         } else if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--file") == 0) {
             if (argc - 1 == i)
                 IO::print_help();
-            config.file_name = argv[++i];
+            config.to_file_name = argv[++i];
             config.to_file = true;
         } else if (strcmp(argv[i], "-ff") == 0 || strcmp(argv[i], "--from-file") == 0) {
             if (argc - 1 == i)
@@ -48,8 +48,6 @@ core::config utils::cli_parser(int argc, char **argv) {
             config.protoc_filter = argv[++i];
         }
     }
-
-
     return config;
 }
 
@@ -69,7 +67,7 @@ std::string utils::get_time(const timeval &ts) {
  * 00000   47 45 54 20 2f 20 48 54  54 50 2f 31 2e 31 0d 0a   GET / HTTP/1.1..
  */
 void
-print_hex_ascii_line(const u_char *payload, int len, int offset) {
+print_hex_ascii_line(const u_char *payload, int len, int offset, bool print_number = true) {
 
     int i;
     int gap;

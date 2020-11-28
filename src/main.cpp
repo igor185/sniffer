@@ -3,16 +3,17 @@
 
 #include "util/utils.h"
 #include "core/core.h"
+#include "UI/UI.h"
 
 int main(int argc, char **argv) {
 
-    auto config = utils::cli_parser(argc, argv);
+    auto config = std::move(utils::cli_parser(argc, argv));
 
-    if (!config.from_file) {
-        core::init_listening(config);
-    } else {
-        core::print_from_file(config);
+    if(config.gui){
+        return UI::init_gui(argc, argv, config);
     }
+
+    core::init_listening(config);
 
     return 0;
 }
