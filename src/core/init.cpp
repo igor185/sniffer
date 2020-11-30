@@ -3,37 +3,30 @@
 
 #include <pcap.h>
 #include <cstdio>
-#include <net/ethernet.h>
+#include <iostream>
 
 #include "core/core.h"
 #include "IO/IO.h"
 
-void another_callback(u_char *args, const struct pcap_pkthdr *pkt_hdr,
-                      const u_char *packet) {
-    sockets::base_socket *sk = sockets::parse_packet(args, pkt_hdr, packet);
+pcap_t *dsc = nullptr;
 
-    if (sk != nullptr && sk->get_type() != "?") {
-            sk->print();
+void core::pause_capturing() {
+    if(dsc != nullptr){
+        pcap_breakloop(dsc);
     }
 }
 
-void to_file(u_char *dumpfile, const struct pcap_pkthdr *pkt_hdr,
-                      const u_char *packet) {
-    pcap_dump(dumpfile, pkt_hdr, packet);
-}
-
-void core::init_listening(const core::config &config) {
+void init_listening_online(const core::config &config) {
     char err_buf[PCAP_ERRBUF_SIZE];
     struct bpf_program fp{};
 
-
-    pcap_t *dsc = pcap_open_live(config.device.c_str(), BUFSIZ, 1, -1, err_buf);
+    dsc = pcap_open_live(config.device.c_str(), BUFSIZ, 1, -1, err_buf);
     if (dsc == nullptr) {
         IO::print(err_buf);
         return;
     }
 
-    if(!config.protoc_filter.empty()){
+    if (!config.protoc_filter.empty()) {
         if (pcap_compile(dsc, &fp, config.protoc_filter.c_str(), 0, 0) == -1) {
             IO::print_err("Couldn't parse filter: " + config.protoc_filter);
             exit(EXIT_FAILURE);
@@ -45,76 +38,60 @@ void core::init_listening(const core::config &config) {
         }
     }
 
-    if(config.to_file) {
-        pcap_dumper_t *dumpfile = pcap_dump_open(dsc, config.file_name.c_str());
-
-        pcap_loop(dsc, config.amount, to_file,  (unsigned char *)dumpfile);
-
-        if(!config.both_out) { // TODO here is delay between to_file and another_callback
-            return;
-        }
+    if (config.gui) {
+        pcap_loop(dsc, config.amount, core::ui_handler, nullptr);
+    } else if (config.to_file) {
+        pcap_dumper_t *dumpfile = pcap_dump_open(dsc, config.to_file_name.c_str());
+        pcap_loop(dsc, config.amount, core::file_handler, (unsigned char *) dumpfile);
+    } else {
+        pcap_loop(dsc, config.amount, core::console_handler, nullptr);
     }
-
-    pcap_loop(dsc, config.amount, another_callback, nullptr);
 }
 
-
-void core::print_from_file(const config &config) {
+void init_listening_offline(const core::config &config) {
     char err_buf[PCAP_ERRBUF_SIZE];
     pcap_t *dumpfile = pcap_open_offline(config.from_file_name.c_str(), err_buf);
 
-
-    if(dumpfile == nullptr){
+    std::cout << err_buf << std::endl;
+    IO::print("here");
+    if (dumpfile == nullptr) {
         IO::print(err_buf);
         exit(EXIT_FAILURE);
     }
 
-    if (pcap_loop(dumpfile, config.amount, &another_callback, nullptr) < 0) {
-        IO::print_err("Error get sockets");
+    if (config.gui) {
+        pcap_loop(dumpfile, config.amount, &core::ui_handler, nullptr);
+    } else {
+        pcap_loop(dumpfile, config.amount, &core::console_handler, nullptr);
+    }
+}
+
+
+void core::init_listening(const core::config &config) {
+
+    if (!config.device.empty()) {
+        init_listening_online(config);
+    } else {
+        init_listening_offline(config);
+    }
+}
+
+std::vector<std::string> core::device_list() {
+    std::vector<std::string> devices;
+
+    pcap_if_t *alldevs;
+    pcap_if_t *d;
+
+    char err_buf[PCAP_ERRBUF_SIZE];
+
+    if (pcap_findalldevs(&alldevs, err_buf) == -1) {
+        fprintf(stderr, "Error in pcap_find all devs_ex: %s\n", err_buf);
         exit(EXIT_FAILURE);
     }
-}
 
-sockets::base_socket *
-sockets::parse_packet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
-    if (pkt_hdr->caplen < ETHER_HDRLEN) {
-        fprintf(stdout, "Packet length less than ethernet header length\n");
-        return nullptr;
-    }
-    auto *eth_sock = new ethernet(args, pkt_hdr, packet);
+    for (d = alldevs; d != nullptr; d = d->next)
+        devices.emplace_back(d->name);
 
-    auto *sock = sockets::parse_network(args, pkt_hdr, packet, eth_sock->get_type());
 
-    if (sock != nullptr)
-        return sock;
-    return eth_sock;
-}
-
-sockets::base_socket * sockets::parse_transport(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet,
-                                                const std::string &type) {
-    sockets::base_socket *sock = nullptr;
-
-    if(type == "TCP"){
-        return new tcp(args, pkt_hdr, packet);
-    }
-    return sock;
-}
-
-sockets::base_socket *
-sockets::parse_network(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet, const std::string &type) {
-    sockets::base_socket *sock = nullptr;
-
-    if (type == "IP") {
-        sock = new ip(args, pkt_hdr, packet);
-    } else if (type == "IPv6") {
-        // todo another types
-    }
-
-    if (sock != nullptr) {
-        auto* sock_transport = sockets::parse_transport(args, pkt_hdr, packet, sock->get_type());
-        if (sock_transport != nullptr)
-            return sock_transport;
-    }
-
-    return sock;
+    return devices;
 }

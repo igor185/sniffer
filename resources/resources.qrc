@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file>images/logo.png</file>
+    </qresource>
+    <qresource>
+        <file>images/ok.png</file>
+    </qresource>
+    <qresource>
+        <file>images/stop.png</file>
+    </qresource>
+    <qresource>
+        <file>images/scroll.png</file>
+    </qresource>
+</RCC>
