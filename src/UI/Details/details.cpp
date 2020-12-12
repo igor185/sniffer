@@ -1,5 +1,5 @@
-#include "UI/details.h"
-#include "ui_details.h"
+#include "details.h"
+
 
 Details::Details(QWidget *viewer, std::vector<sockets::detail_view>& view, QWidget *parent)
     : QMainWindow(parent)

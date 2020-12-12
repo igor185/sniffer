@@ -13,10 +13,12 @@
 #include <QToolBar>
 
 #include "core/core.h"
-
+#include "../Filters/ProxyModel.h"
+#include "../Filters/filters.h"
+#include "ui_table.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui { class Table; }
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -29,22 +31,24 @@ public:
 
     void add_to_table(sockets::base_socket* socket);
 
-    void get_proxying_data(std::vector<const struct pcap_pkthdr *>& pkt_hdr, std::vector<const u_char *>& packet);
+    void get_proxying_data(std::vector<pcap_pkthdr>& pkt_hdr, std::vector<const u_char *>& packet);
 
     QMutex mutex;
 private:
     core::config& config;
     std::vector<sockets::base_socket *> data;
-    Ui::MainWindow *ui;
-    QSortFilterProxyModel* proxy_model;
+    Ui::Table *ui;
+    ProxyModel* proxy_model;
     QStandardItemModel* model;
-    QComboBox* comboBox;
-    QLineEdit* lineEdit;
+//    QComboBox* comboBox;
+//    QLineEdit* lineEdit;
     QToolBar* bar = new QToolBar;
     QAction* ok = bar->addAction(QPixmap(":images/ok.png"), "continue");
     QAction* stop = bar->addAction(QPixmap(":images/stop.png"), "stop");
     QAction* scroll = bar->addAction(QPixmap(":images/scroll.png"), "scroll");
+    QAction* setting = bar->addAction(QPixmap(":images/settings.png"), "settings");
     std::atomic<bool> isScroll = true;
+    FiltersView* filters;
 
 private slots:
     void on_lineEdit_textChanged(const QString &arg1);
@@ -54,6 +58,7 @@ private slots:
     void start(bool state);
     void press_scroll(bool state);
     void addItem();
+    void settings_open(bool);
 
 signals:
     void pause_sniffer();

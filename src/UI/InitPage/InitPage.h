@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 
 #include "core/core.h"
+#include "ui_init_page.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InitPage; }

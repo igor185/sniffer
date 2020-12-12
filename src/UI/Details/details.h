@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "core/core.h"
+#include "ui_details.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Details; }

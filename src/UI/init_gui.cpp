@@ -10,8 +10,8 @@
 
 #include "util/utils.h"
 #include "UI/UI.h"
-#include "UI/InitPage.h"
-#include "UI/Table.h"
+#include "InitPage/InitPage.h"
+#include "Table/Table.h"
 #include <IO/IO.h>
 #include <QFileDialog>
 #include <QToolBar>
@@ -88,9 +88,12 @@ private:
                                                                     "",
                                                                     tr("Sniffer (*.pcap)"));
                     config.to_file = true;
-                    config.to_file_name = fileName.toStdString() + ".pcap";
+                    int index = fileName.lastIndexOf(".");
+                    if(index != -1 && fileName.toStdString().substr(index) == "pcap") {
+                        config.to_file_name = fileName.toStdString() + ".pcap";
+                    }
                 }
-                std::vector<const struct pcap_pkthdr *> pkt_hdr;
+                std::vector<pcap_pkthdr> pkt_hdr;
                 std::vector<const u_char *> packet;
 
                 window1->get_proxying_data(pkt_hdr, packet);

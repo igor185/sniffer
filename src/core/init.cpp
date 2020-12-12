@@ -95,3 +95,9 @@ std::vector<std::string> core::device_list() {
 
     return devices;
 }
+
+sockets::base_socket::base_socket(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet): packet(packet),
+        pkt_hdr(pkt_hdr),
+        caplen(pkt_hdr->caplen),
+        len(pkt_hdr->len){
+}

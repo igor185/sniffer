@@ -5,6 +5,10 @@
 
 #include "core/core.h"
 
+//#include "ui_init_page.h"
+//#include "ui_filters.h"
+//#include "ui_table.h"
+//#include "ui_details.h"
 
 namespace UI {
     int init_gui(int argc, char** argv, core::config& config);

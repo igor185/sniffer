@@ -12,6 +12,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -45,18 +46,20 @@ add_library(IO STATIC
 
 add_library(UI STATIC
         src/UI/InitPage/InitPage.cpp
-        inc/UI/InitPage.h
+        src/UI/InitPage/InitPage.h
         inc/UI/UI.h
         src/UI/init_gui.cpp
-        inc/UI/Table.h
+        src/UI/Table/Table.h
         src/UI/Table/table.cpp
         inc/UI/UI.h
         src/UI/Details/details.cpp
-        inc/UI/details.h
+        src/UI/Details/details.h
         src/UI/Details/QHexView.cpp
         inc/UI/QHexView.h
-        src/UI/Details/QHexView.cpp
-        )
+        src/UI/Filters/ProxyModel.h
+        src/UI/Filters/filters.h
+        src/UI/Filters/filters.cpp
+        src/UI/Filters/ProxyModel.cpp)
 
 
 list(APPEND RESOURCES resources/resources.qrc)

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
+ <class>Table</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Table</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">

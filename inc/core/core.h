@@ -41,8 +41,7 @@ namespace core {
 
     void ui_handler(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
 
-    void write_to_file(core::config &config, std::vector<const struct pcap_pkthdr *> &pkt_hdr,
-                       std::vector<const u_char *> &packet);
+    void write_to_file(core::config &config, std::vector<pcap_pkthdr> &pkt_hdr, std::vector<const u_char *> &packet);
 }
 
 namespace sockets {
@@ -62,6 +61,8 @@ namespace sockets {
 
     class base_socket {
     public:
+        base_socket(u_char *args, const pcap_pkthdr *pkt_hdr, const u_char *packet);
+
         void print() {
             _print();
         };
@@ -78,11 +79,11 @@ namespace sockets {
             return _to_view();
         }
 
-        base_socket(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) : pkt_hdr(pkt_hdr),
-                                                                                             packet(packet) {}
-
         const struct pcap_pkthdr *pkt_hdr;
         const u_char *packet;
+        timeval ts;    /* time stamp */
+        bpf_u_int32 caplen;    /* length of portion present */
+        bpf_u_int32 len;
     private:
         virtual void _print() = 0;
 

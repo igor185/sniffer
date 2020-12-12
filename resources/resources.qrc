@@ -11,4 +11,9 @@
     <qresource>
         <file>images/scroll.png</file>
     </qresource>
+    <qresource>
+        <file>images/settings.png</file>
+        <file>images/or.png</file>
+        <file>images/and.png</file>
+    </qresource>
 </RCC>

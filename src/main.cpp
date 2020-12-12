@@ -6,8 +6,7 @@
 #include "UI/UI.h"
 
 int main(int argc, char **argv) {
-
-    auto config = std::move(utils::cli_parser(argc, argv));
+    auto config = utils::cli_parser(argc, argv);
 
     if(config.gui){
         return UI::init_gui(argc, argv, config);
