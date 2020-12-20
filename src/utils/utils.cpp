@@ -4,6 +4,9 @@
 #include <cstring>
 #include <regex>
 #include <unistd.h>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "util/utils.h"
 #include "IO/IO.h"
@@ -112,6 +115,33 @@ print_hex_ascii_line(const u_char *payload, int len, int offset, bool print_numb
 
 }
 
+std::vector<std::string> utils::get_recent_files(){
+    std::ifstream file("recent.txt");
+    if(!file.is_open()){
+        return {};
+    }
+
+    std::vector<std::string> res;
+    std::string line;
+
+    while (std::getline(file, line))
+        res.push_back(std::move(line));
+
+    file.close();
+    return res;
+}
+
+void utils::set_recent_file(const std::string& file_name){
+    for(auto&& file_name_saved: get_recent_files())
+        if(file_name_saved == file_name)
+            return;
+
+    std::ofstream file("recent.txt", std::ifstream::app);
+
+    file << file_name << "\n";
+
+    file.close();
+}
 /*
  * print packet payload data (avoid printing binary data)
  */

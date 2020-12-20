@@ -1,0 +1,2 @@
+/home/igor/Documents/study/OS/sniffer/cmake-build-debug/log.pcap
+/home/igor/Documents/study/OS/sniffer/log.pcap

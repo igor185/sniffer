@@ -12,6 +12,8 @@ namespace utils {
 
     bool is_integer(const std::string &s);
     int to_number(const std::string &s);
+    std::vector<std::string> get_recent_files();
+    void set_recent_file(const std::string& file);
 }
 
 #endif //ADDER_UTILS_H

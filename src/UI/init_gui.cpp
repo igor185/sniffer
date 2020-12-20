@@ -46,6 +46,7 @@ public:
 
         if (config.device.empty() && !config.from_file) {
             connect(w, &InitPage::callback, this, &MainGui::callback);
+            connect(w, &InitPage::callback_file, this, &MainGui::callback_file);
         } else {
             init_second_step();
         }
@@ -125,6 +126,13 @@ private slots:
 
     void callback(QListWidgetItem *item) {
         config.device = item->text().toStdString();
+
+        init_second_step();
+    };
+
+    void callback_file(QString file) {
+        config.from_file_name = file.toStdString();
+        config.from_file = true;
 
         init_second_step();
     };
