@@ -20,7 +20,18 @@ void IO::print_help() {
           "[-ff| --from-file name] - output file"
           "[-a|--amount number] - number of packages to handle (-1 - without limit)"
           "[-o|--out] - write to file and stdio (if --file present)"
+          "[-c|--console] - print into stdout (gui by default)"
           "[-p|--protocol name] - to filter using protocol name(doesn't work for reading from file TODO)");
 
     exit(EXIT_SUCCESS);
+}
+
+void IO::print_socket(std::vector<sockets::detail_view>&& view){
+    for(auto& i: view){
+        IO::print(i.preview);
+        for(auto& j: i.properties){
+            printf("\t%-20s\t: %-20s\n", j.first.c_str(), j.second.c_str());
+        }
+    }
+    IO::print("------");
 }

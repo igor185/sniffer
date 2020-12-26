@@ -20,8 +20,8 @@ sockets::base_socket* parse_network(u_char *args, const struct pcap_pkthdr *pkt_
 
     if (type == "IP") {
         sock = new sockets::ip(args, pkt_hdr, packet);
-    } else if (type == "IPv6") {
-        // todo another types
+    } else if (type == "ARP") {
+        sock = new sockets::arp(args, pkt_hdr, packet);
     }
 
     if (sock != nullptr) {

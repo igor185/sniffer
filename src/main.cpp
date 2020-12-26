@@ -8,9 +8,11 @@
 int main(int argc, char **argv) {
     auto config = utils::cli_parser(argc, argv);
 
-    if(config.gui){
+    if(!config.console){
         return UI::init_gui(argc, argv, config);
     }
+
+    config.device = "enx00e04c360457";
 
     core::init_listening(config);
 

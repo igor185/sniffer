@@ -3,22 +3,9 @@
 
 #include "core/core.h"
 #include "IO/IO.h"
-#include "util/utils.h"
 
 sockets::tcp::tcp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
         ip(args, pkt_hdr, packet), tcp_ptr((struct sniff_tcp *) (packet + SIZE_ETHERNET + sizeof(sniff_ip))) {
-}
-
-void sockets::tcp::_print() {
-    if (pkt_hdr != nullptr && tcp_ptr != nullptr) {
-        IO::print(utils::get_time(pkt_hdr->ts) + " " +
-                  get_type() + " " +
-                          std::to_string(ntohs(tcp_ptr->th_sport)) + " -> " +
-                          std::to_string(ntohs(tcp_ptr->th_dport)) + " " + std::to_string(pkt_hdr->len - SIZE_ETHERNET)); // TODO size
-
-//        int size_tcp = TH_OFF(tcp)*4;
-//        utils::print_payload((u_char *)(packet + SIZE_ETHERNET + ip_size), ntohs(tcp_ptr->) - ip_size);
-    }
 }
 
 std::string get_flag(u_char  th_flags){

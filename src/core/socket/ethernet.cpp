@@ -3,22 +3,11 @@
 
 
 #include "core/core.h"
-#include "util/utils.h"
 #include "IO/IO.h"
 
 
 sockets::ethernet::ethernet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
         base_socket(args, pkt_hdr, packet), e_ptr((struct ether_header *) packet) {
-}
-
-void sockets::ethernet::_print() {
-    if (pkt_hdr != nullptr && e_ptr != nullptr) {
-        IO::print(utils::get_time(pkt_hdr->ts) + " " +
-                  get_type() + " " +
-                  ether_ntoa((struct ether_addr *) e_ptr->ether_shost) + " -> " +
-                  ether_ntoa((struct ether_addr *) e_ptr->ether_dhost) + " " +
-                  std::to_string(pkt_hdr->len - SIZE_ETHERNET));
-    }
 }
 
 sockets::table_view sockets::ethernet::_to_row() {

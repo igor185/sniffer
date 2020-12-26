@@ -49,6 +49,8 @@ core::config utils::cli_parser(int argc, char **argv) {
             if (argc - 1 == i)
                 IO::print_help();
             config.protoc_filter = argv[++i];
+        }else if(strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--console") == 0){
+            config.console = true;
         }
     }
     return config;
@@ -91,7 +93,6 @@ print_hex_ascii_line(const u_char *payload, int len, int offset, bool print_numb
     /* print space to handle line less than 8 bytes */
     if (len < 8)
         printf(" ");
-
     /* fill hex gap with spaces if not full line */
     if (len < 16) {
         gap = 16 - len;

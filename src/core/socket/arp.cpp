@@ -3,7 +3,6 @@
 
 #include <core/core.h>
 #include <IO/IO.h>
-#include "util/utils.h"
 
 sockets::arp::arp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) : ip(args, pkt_hdr, packet),
                                                                                            arp_ptr((struct arp_hdr *) (
@@ -14,10 +13,6 @@ sockets::arp::arp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char 
 
 std::string sockets::arp::_get_type() {
     return "ARP";
-}
-
-void sockets::arp::_print() {
-    // TODO
 }
 
 std::vector<sockets::detail_view> sockets::arp::_to_view() {

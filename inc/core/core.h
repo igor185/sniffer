@@ -9,7 +9,6 @@
 #include <netinet/ether.h>
 #include <netinet/if_ether.h>
 #include <utility>
-
 #include "core/structs.h"
 
 namespace core {
@@ -17,7 +16,7 @@ namespace core {
         bool to_file = false;
         bool from_file = false;
         bool both_out = false; // TODO
-        bool gui = true;
+        bool console = false;
         std::string device;
         std::string to_file_name = "log.pcap";
         std::string from_file_name = "log.pcap";
@@ -60,9 +59,7 @@ namespace sockets {
     public:
         base_socket(u_char *args, const pcap_pkthdr *pkt_hdr, const u_char *packet);
 
-        void print() {
-            _print();
-        };
+        void print();
 
         std::string get_type() {
             return _get_type();
@@ -82,8 +79,6 @@ namespace sockets {
         bpf_u_int32 caplen;    /* length of portion present */
         bpf_u_int32 len;
     private:
-        virtual void _print() = 0;
-
         virtual std::string _get_type() = 0;
 
         virtual table_view _to_row() = 0;
@@ -99,8 +94,6 @@ namespace sockets {
         ethernet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
 
     private:
-        void _print() override;
-
         std::string _get_type() override;
 
         sockets::table_view _to_row() override;
@@ -121,8 +114,6 @@ namespace sockets {
         sockets::table_view _to_row() override;
 
     private:
-        void _print() override;
-
         std::string _get_type() override;
 
         const struct sniff_ip *ip_ptr;
@@ -136,8 +127,6 @@ namespace sockets {
 
     private:
         std::string _get_type() override;
-
-        void _print() override;
 
         const struct sniff_tcp *tcp_ptr;
 
@@ -154,8 +143,6 @@ namespace sockets {
     private:
         std::string _get_type() override;
 
-        void _print() override;
-
         const struct udp_header *udp_ptr;
 
         std::vector<sockets::detail_view> _to_view() override;
@@ -170,8 +157,6 @@ namespace sockets {
 
     private:
         std::string _get_type() override;
-
-        void _print() override;
 
         const struct arp_hdr *arp_ptr;
 

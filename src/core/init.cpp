@@ -38,7 +38,7 @@ void init_listening_online(const core::config &config) {
         }
     }
 
-    if (config.gui) {
+    if (!config.console) {
         pcap_loop(dsc, config.amount, core::ui_handler, nullptr);
     } else if (config.to_file) {
         pcap_dumper_t *dumpfile = pcap_dump_open(dsc, config.to_file_name.c_str());
@@ -58,7 +58,7 @@ void init_listening_offline(const core::config &config) {
         exit(EXIT_FAILURE);
     }
 
-    if (config.gui) {
+    if (!config.console) {
         pcap_loop(dumpfile, config.amount, &core::ui_handler, nullptr);
     } else {
         pcap_loop(dumpfile, config.amount, &core::console_handler, nullptr);
@@ -67,7 +67,6 @@ void init_listening_offline(const core::config &config) {
 
 
 void core::init_listening(const core::config &config) {
-
     if (!config.device.empty()) {
         init_listening_online(config);
     } else {
@@ -95,6 +94,9 @@ std::vector<std::string> core::device_list() {
     return devices;
 }
 
+void sockets::base_socket::print() {
+    IO::print_socket(to_view());
+}
 sockets::base_socket::base_socket(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet): packet(packet),
         pkt_hdr(pkt_hdr),
         caplen(pkt_hdr->caplen),

@@ -4,8 +4,6 @@
 
 
 #include <core/core.h>
-#include <IO/IO.h>
-#include "util/utils.h"
 
 
 sockets::udp::udp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
@@ -14,15 +12,6 @@ sockets::udp::udp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char 
 
 std::string sockets::udp::_get_type() {
     return "UDP";
-}
-
-void sockets::udp::_print() {
-    if (pkt_hdr != nullptr && udp_ptr != nullptr) {
-        IO::print(utils::get_time(pkt_hdr->ts) + " " +
-                  get_type() + " " +
-                  std::to_string(ntohs(udp_ptr->udph_srcport)) + " -> " +
-                  std::to_string(ntohs(udp_ptr->udph_destport)) + " " + std::to_string(pkt_hdr->len - SIZE_ETHERNET)); // TODO size
-    }
 }
 
 std::vector<sockets::detail_view> sockets::udp::_to_view() {
