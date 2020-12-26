@@ -7,9 +7,7 @@
 ProxyModel::ProxyModel(QWidget *parent) : QSortFilterProxyModel(parent){
         primary_filters = {};
         auto* filter = new Filter();
-        auto* filter2 = new Filter();
         primary_filters.push_back(filter);
-        primary_filters.push_back(filter2);
 
         connect(filter, SIGNAL(changed()), this, SLOT(changed()));
 }
@@ -29,7 +27,7 @@ Filter *ProxyModel::getFirst() {
 }
 
 bool ProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
-    for(Filter* filter: primary_filters){
+    for(Filter* filter: primary_filters){ // TODO use reversed iterator to use conneted with prev
         QModelIndex index = sourceModel()->index(sourceRow, filter->type, sourceParent);
         if(!filter->filter(index))
             return false;

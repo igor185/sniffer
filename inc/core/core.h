@@ -10,10 +10,7 @@
 #include <netinet/if_ether.h>
 #include <utility>
 
-#include "core/ethernet.h"
-#include "core/ip.h"
-#include "core/tcp.h"
-#include "core/udp.h"
+#include "core/structs.h"
 
 namespace core {
     struct config {
@@ -121,14 +118,14 @@ namespace sockets {
     protected:
         std::vector<sockets::detail_view> _to_view() override;
 
+        sockets::table_view _to_row() override;
+
     private:
         void _print() override;
 
         std::string _get_type() override;
 
         const struct sniff_ip *ip_ptr;
-
-        sockets::table_view _to_row() override;
 
     };
 
@@ -160,6 +157,23 @@ namespace sockets {
         void _print() override;
 
         const struct udp_header *udp_ptr;
+
+        std::vector<sockets::detail_view> _to_view() override;
+
+        sockets::table_view _to_row() override;
+    };
+
+    class arp : public ip {
+    public:
+
+        arp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
+
+    private:
+        std::string _get_type() override;
+
+        void _print() override;
+
+        const struct arp_hdr *arp_ptr;
 
         std::vector<sockets::detail_view> _to_view() override;
 

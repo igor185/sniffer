@@ -92,14 +92,10 @@ void MainWindow::add_to_table(sockets::base_socket *socket) {
 }
 
 void MainWindow::on_lineEdit_textChanged(const QString &arg1) {
-//    QRegExp regExp(arg1, Qt::CaseInsensitive, QRegExp::Wildcard);
-//    proxy_model->setFilterRegExp(regExp);
     proxy_model->onChangeText(arg1);
 }
 
 void MainWindow::on_comboBox_edit(int index) {
-//    proxy_model->setFilterKeyColumn(index + 1);
-//    lineEdit->setText("");
     proxy_model->onChangeField(index);
 }
 

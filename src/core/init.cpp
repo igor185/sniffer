@@ -53,7 +53,6 @@ void init_listening_offline(const core::config &config) {
     pcap_t *dumpfile = pcap_open_offline(config.from_file_name.c_str(), err_buf);
 
     std::cout << err_buf << std::endl;
-    IO::print("here");
     if (dumpfile == nullptr) {
         IO::print(err_buf);
         exit(EXIT_FAILURE);

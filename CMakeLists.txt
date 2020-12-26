@@ -33,13 +33,11 @@ add_library(utils STATIC
 add_library(core STATIC
         src/core/init.cpp
         src/core/socket/ethernet.cpp
-        inc/core/ip.h
         src/core/socket/ip.cpp
         inc/core/core.h
-        inc/core/tcp.h
         src/core/socket/tcp.cpp
         src/core/handlers.cpp
-        src/core/socket/general.cpp inc/core/udp.h src/core/socket/udp.cpp)
+        src/core/socket/general.cpp src/core/socket/udp.cpp src/core/socket/arp.cpp inc/core/structs.h)
 
 add_library(IO STATIC
         src/IO/IO.cpp inc/IO/IO.h)
@@ -51,7 +49,6 @@ add_library(UI STATIC
         src/UI/init_gui.cpp
         src/UI/Table/Table.h
         src/UI/Table/table.cpp
-        inc/UI/UI.h
         src/UI/Details/details.cpp
         src/UI/Details/details.h
         src/UI/Details/QHexView.cpp

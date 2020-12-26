@@ -21,11 +21,16 @@ enum Types {
     Protocol
 };
 
+enum Logic {
+    And,
+    Or
+};
+
 class Filter : public QWidget {
 Q_OBJECT
 
 public:
-    explicit Filter();
+    explicit Filter(int type = Logic::And);
 
     QWidget* draw();
 
@@ -34,7 +39,9 @@ public:
     [[nodiscard]] bool filter(const QModelIndex &index) const ;
 
     Types type;
+    Logic connect_with_prev;
     QString value;
+    QPushButton *addButton;
 private slots:
     void on_lineEdit_textChanged(const QString &new_value);
 
@@ -42,6 +49,9 @@ private slots:
 private:
     QComboBox *comboBox;
     QLineEdit *lineEdit;
+
+    QComboBox *comboBox_ = nullptr;
+    QLineEdit *lineEdit_ = nullptr;
 
 signals:
         void changed();

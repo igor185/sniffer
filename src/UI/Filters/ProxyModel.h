@@ -31,6 +31,10 @@ public:
         return primary_filters;
     }
 
+    void add_filter(Filter* filter){
+        primary_filters.push_back(filter);
+    }
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 private slots:
@@ -47,20 +51,21 @@ Q_OBJECT
 public:
     explicit FiltersView(ProxyModel* proxy, QWidget *parent = nullptr);
 
-    void add(QWidget *layout);
-
     ~FiltersView() override;
 
 private slots:
-
-    void handleButton();
+    void handleAnd();
+    void handleOr();
 
 private:
     QToolBar *bar = new QToolBar;
     Ui::FiltersView *ui;
+    ProxyModel* proxy;
 
-    QAction *orIcon = bar->addAction(QPixmap(":images/or.png"), "or"); // TODO find better icons
-    QAction *andIcon = bar->addAction(QPixmap(":images/and.png"), "and");
+    QAction *orIcon = bar->addAction(QPixmap(":images/plus.png"), "or");
+    QAction *andIcon = bar->addAction(QPixmap(":images/plus.png"), "and");
+
+    void addFilter(Logic type);
 };
 
 

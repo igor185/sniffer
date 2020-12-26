@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "core/core.h"
-#include "core/tcp.h"
 #include "IO/IO.h"
 #include "util/utils.h"
 
