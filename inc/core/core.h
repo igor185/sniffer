@@ -20,7 +20,7 @@ namespace core {
         std::string device;
         std::string to_file_name = "log.pcap";
         std::string from_file_name = "log.pcap";
-        int amount = -1;
+        long amount = -1;
         std::string protoc_filter;
         bool captured = false;
     };

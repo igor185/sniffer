@@ -27,8 +27,9 @@ include(cmake/extra/FindPCAP.cmake)
 
 # Project source compilation
 include_directories(inc)
+include_directories(src)
 add_library(utils STATIC
-        src/utils/utils.cpp inc/util/utils.h)
+        src/utils/utils.cpp src/utils/utils.h src/utils/cli_parser.cpp src/utils/print_payload.cpp src/utils/files.cpp)
 
 add_library(core STATIC
         src/core/init.cpp
@@ -58,13 +59,15 @@ add_library(UI STATIC
         src/UI/Filters/filters.cpp
         src/UI/Filters/ProxyModel.cpp)
 
+add_library(config STATIC src/config.h)
+
 
 list(APPEND RESOURCES resources/resources.qrc)
 qt5_add_resources(RCC_SOURCES ${RESOURCES})
 
 add_executable(sniffer ${RCC_SOURCES} src/main.cpp)
 
-target_link_libraries(UI Qt5::Widgets core)
+target_link_libraries(UI Qt5::Widgets core config)
 target_link_libraries(sniffer Qt5::Widgets UI utils core IO ${PCAP_LIBRARY})
 
 # Define ALL_TARGETS variable to use in some directives

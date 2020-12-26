@@ -8,11 +8,9 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 
-#include "util/utils.h"
 #include "UI/UI.h"
 #include "InitPage/InitPage.h"
 #include "Table/Table.h"
-#include <IO/IO.h>
 #include <QFileDialog>
 #include <QToolBar>
 
