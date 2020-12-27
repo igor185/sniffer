@@ -65,3 +65,31 @@ std::vector<sockets::detail_view>  sockets::ethernet::_to_view() {
 
     return {view};
 }
+
+std::string sockets::ethernet::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return std::string(ether_ntoa((struct ether_addr *) e_ptr->ether_shost));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::ethernet::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return std::string( ether_ntoa((struct ether_addr *) e_ptr->ether_dhost));
+        default:
+            return "";
+    }
+
+}
+
+std::string sockets::ethernet::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return "ethernet";
+        default:
+            return "";
+    }
+}

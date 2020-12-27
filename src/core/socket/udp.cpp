@@ -41,3 +41,39 @@ sockets::table_view sockets::udp::_to_row() {
 
     return view;
 }
+
+std::string sockets::udp::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::source_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(udp_ptr->udph_srcport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::udp::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::destination_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(udp_ptr->udph_destport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::udp::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::protocol_layer_(type);
+        case Transport:
+            return "UDP";
+        default:
+            return "";
+    }
+}

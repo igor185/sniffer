@@ -19,6 +19,7 @@ class ProxyModel: public QSortFilterProxyModel
     Q_OBJECT
 
 public:
+    std::vector<sockets::base_socket *> data;
     explicit ProxyModel(QWidget *parent = nullptr);
 
     void onChangeText(const QString& value);

@@ -3,6 +3,9 @@
 #ifndef SNIFFER_CONFIG_H
 #define SNIFFER_CONFIG_H
 
+#include <string>
+#include <vector>
+
 #define FILE_RECENT_LOGS "recent.txt"
 
 struct config {
@@ -16,6 +19,18 @@ struct config {
     int amount = -1;
     std::string protoc_filter;
     bool captured = false;
+};
+
+enum LengthType {
+    Great = 0,
+    Less,
+    Eaquals
+};
+
+enum LayerType {
+    Physic,
+    Network,
+    Transport
 };
 
 #endif //SNIFFER_CONFIG_H

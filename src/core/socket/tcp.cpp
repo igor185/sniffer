@@ -63,3 +63,39 @@ sockets::table_view sockets::tcp::_to_row() {
 
     return view;
 }
+
+std::string sockets::tcp::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::source_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(tcp_ptr->th_sport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::tcp::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::destination_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(tcp_ptr->th_dport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::tcp::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::protocol_layer_(type);
+        case Transport:
+            return "TCP";
+        default:
+            return "";
+    }
+}

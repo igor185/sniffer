@@ -15,7 +15,7 @@
 
 
 enum Types {
-    Source,
+    Source = 0,
     Destination,
     Length,
     Protocol
@@ -36,9 +36,10 @@ public:
 
     void draw(QHBoxLayout *layout);
 
-    [[nodiscard]] bool filter(const QModelIndex &index) const ;
+    bool filter(sockets::base_socket *sock) const ;
 
     Types type;
+    int type2 = 0;
     Logic connect_with_prev;
     QString value;
     QPushButton *addButton;
@@ -46,13 +47,17 @@ private slots:
     void on_lineEdit_textChanged(const QString &new_value);
 
     void on_comboBox_edit(int new_type);
+    void on_comboBox2_edit(int new_type);
 private:
     QComboBox *comboBox;
+    QComboBox *comboBox2;
     QLineEdit *lineEdit;
 
     QComboBox *comboBox_ = nullptr;
+    QComboBox *comboBox2_ = nullptr;
     QLineEdit *lineEdit_ = nullptr;
 
+    void fillOptions();
 signals:
         void changed();
 };

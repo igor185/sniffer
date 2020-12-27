@@ -87,7 +87,7 @@ void MainWindow::add_to_table(sockets::base_socket *socket) {
 //    items.append(new QStandardItem(row.info.c_str()));
 
     model->appendRow(items);
-    data.push_back(socket);
+    proxy_model->data.push_back(socket);
     mutex.unlock();
 }
 
@@ -100,7 +100,7 @@ void MainWindow::on_comboBox_edit(int index) {
 }
 
 void MainWindow::on_doubleClick(const QModelIndex &index) {
-    auto *socket = data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
+    auto *socket = proxy_model->data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
     auto details_view = socket->to_view();
 
     QByteArray array((const char *)socket->packet, socket->pkt_hdr->len);
@@ -120,7 +120,7 @@ MainWindow::get_proxying_data(std::vector<pcap_pkthdr> &pkt_hdr, std::vector<con
     pkt_hdr.reserve(proxy_model->rowCount());
     packet.reserve(proxy_model->rowCount());
     for (size_t i = 0; i < proxy_model->rowCount(); i++) {
-        auto *elem = data[proxy_model->index(i, 0).data().value<size_t>() - 1];
+        auto *elem = proxy_model->data[proxy_model->index(i, 0).data().value<size_t>() - 1];
         pkt_hdr.push_back({elem->pkt_hdr->ts, elem->len, elem->cap_len});
         packet.push_back(elem->packet);
     }

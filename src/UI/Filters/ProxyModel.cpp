@@ -27,10 +27,26 @@ Filter *ProxyModel::getFirst() {
 }
 
 bool ProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const {
-    for(Filter* filter: primary_filters){ // TODO use reversed iterator to use conneted with prev
-        QModelIndex index = sourceModel()->index(sourceRow, filter->type, sourceParent);
-        if(!filter->filter(index))
+    bool prev = false, curr;
+    Logic prevLogic = Or, currLogic;
+    for(auto filter = primary_filters.rbegin(); filter != primary_filters.rend(); filter++){
+        QModelIndex index = sourceModel()->index(sourceRow, (*filter)->type, sourceParent);
+        auto *socket = data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
+
+        curr = (*filter)->filter(socket);
+        currLogic = (*filter)->connect_with_prev;
+
+        if(prevLogic == Or){
+            prev = prev || curr;
+            prevLogic = currLogic;
+            continue;
+        }
+
+        if(!prev)
             return false;
+
+        prev = curr;
+        prevLogic = currLogic;
     }
-    return true;
+    return prev;
 }

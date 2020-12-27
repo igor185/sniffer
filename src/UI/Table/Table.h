@@ -36,12 +36,11 @@ public:
     QMutex mutex;
 private:
     config& configs;
-    std::vector<sockets::base_socket *> data;
     Ui::Table *ui;
     ProxyModel* proxy_model;
     QStandardItemModel* model;
-//    QComboBox* comboBox;
-//    QLineEdit* lineEdit;
+
+
     QToolBar* bar = new QToolBar;
     QAction* ok = bar->addAction(QPixmap(":images/ok.png"), "continue");
     QAction* stop = bar->addAction(QPixmap(":images/stop.png"), "stop");

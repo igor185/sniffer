@@ -3,6 +3,9 @@
 #ifndef SNIFFER_SOCKETS_H
 #define SNIFFER_SOCKETS_H
 
+#include "config.h"
+#include <pcap.h>
+
 namespace sockets {
 
     struct table_view {
@@ -36,16 +39,39 @@ namespace sockets {
             return _to_view();
         }
 
+        bool filter_size(int type, int length){
+            switch (type - 1) {
+                case Great:
+                    return len > length;
+                case Less:
+                    return len < length;
+                case Eaquals:
+                    return len == length;
+            }
+            return false;
+        }
+
+        std::string source_layer(int type){
+            return source_layer_(type);
+        }
+        std::string destination_layer(int type){
+            return destination_layer_(type);
+        };
+        std::string protocol_layer(int type){
+            return protocol_layer_(type);
+        };
+
         const struct pcap_pkthdr *pkt_hdr;
         const u_char *packet;
         bpf_u_int32 cap_len;
         bpf_u_int32 len;
     private:
         virtual std::string _get_type() = 0;
-
         virtual table_view _to_row() = 0;
-
         virtual std::vector<detail_view> _to_view() = 0;
+        virtual std::string source_layer_(int type) = 0;
+        virtual std::string destination_layer_(int type) = 0;
+        virtual std::string protocol_layer_(int type) = 0;
     };
 
     base_socket *parse_packet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
@@ -65,6 +91,9 @@ namespace sockets {
 
         std::vector<sockets::detail_view> _to_view() override;
 
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
     private:
         const struct ether_header *e_ptr;
     };
@@ -80,6 +109,9 @@ namespace sockets {
 
         std::string _get_type() override;
 
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
     private:
         const struct sniff_ip *ip_ptr;
     };
@@ -94,6 +126,10 @@ namespace sockets {
         std::vector<sockets::detail_view> _to_view() override;
 
         sockets::table_view _to_row() override;
+
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
 
     private:
         const struct sniff_tcp *tcp_ptr;
@@ -110,6 +146,10 @@ namespace sockets {
 
         sockets::table_view _to_row() override;
 
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
+
     private:
         const struct udp_header *udp_ptr;
     };
@@ -124,6 +164,10 @@ namespace sockets {
         std::vector<sockets::detail_view> _to_view() override;
 
         sockets::table_view _to_row() override;
+
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
 
     private:
         const struct arp_hdr *arp_ptr;

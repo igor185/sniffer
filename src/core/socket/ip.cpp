@@ -89,3 +89,36 @@ sockets::table_view sockets::ip::_to_row() {
 
     return view;
 }
+
+std::string sockets::ip::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return ethernet::source_layer_(type);
+        case Network:
+            return inet_ntoa(ip_ptr->ip_src);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::ip::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return ethernet::destination_layer_(type);
+        case Network:
+            return inet_ntoa(ip_ptr->ip_src);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::ip::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return "ethernet";
+        case Network:
+            return "IPv4";
+        default:
+            return "";
+    }
+}

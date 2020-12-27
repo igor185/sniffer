@@ -41,3 +41,37 @@ sockets::table_view sockets::arp::_to_row() {
 
     return view;
 }
+
+std::string sockets::arp::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::source_layer_(type);
+        case Transport:
+            return std::to_string(arp_ptr->ar_hrd);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::arp::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::destination_layer_(type);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::arp::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::source_layer_(type);
+        case Transport:
+            return "ARP";
+        default:
+            return "";
+    }
+}

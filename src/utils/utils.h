@@ -13,7 +13,7 @@ namespace utils {
     void print_payload(const u_char *payload, int len);
 
     bool is_integer(const std::string &s);
-    long to_number(const std::string &s);
+    int to_number(const std::string &s);
     std::vector<std::string> get_recent_files();
     void set_recent_file(const std::string& file);
 }

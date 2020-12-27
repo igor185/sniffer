@@ -9,6 +9,8 @@
 #define ETHER_HDRLEN 14
 #endif
 
+#include <net/ethernet.h>
+
 /* ethernet headers are always exactly 14 bytes */
 #define SIZE_ETHERNET 14
 
