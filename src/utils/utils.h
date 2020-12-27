@@ -9,7 +9,7 @@
 #include "config.h"
 
 namespace utils {
-    core::config cli_parser(int argc, char** argv);
+    config cli_parser(int argc, char** argv);
     void print_payload(const u_char *payload, int len);
 
     bool is_integer(const std::string &s);

@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 
-#include "UI/QHexView.h"
+#include "UI/HexView/QHexView.h"
 
 const int HEXCHARS_IN_LINE = 47;
 const int GAP_ADR_HEX = 10;

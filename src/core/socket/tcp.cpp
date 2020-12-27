@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "core/core.h"
-#include "IO/IO.h"
+
 
 sockets::tcp::tcp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
         ip(args, pkt_hdr, packet), tcp_ptr((struct sniff_tcp *) (packet + SIZE_ETHERNET + sizeof(sniff_ip))) {

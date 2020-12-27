@@ -12,9 +12,11 @@ int main(int argc, char **argv) {
         return UI::init_gui(argc, argv, config);
     }
 
-    config.device = "enx00e04c360457";
+    config.device = "enx00e04c360457"; // TODO
 
-    core::init_listening(config);
+    core::sniffer sniffer(config);
+
+    sniffer.start_listen();
 
     return 0;
 }

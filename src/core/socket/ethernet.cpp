@@ -1,9 +1,7 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-
 #include "core/core.h"
-#include "IO/IO.h"
 
 
 sockets::ethernet::ethernet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :

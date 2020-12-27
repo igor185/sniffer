@@ -3,7 +3,6 @@
 #ifndef SNIFFER_STRUCTS_H
 #define SNIFFER_STRUCTS_H
 
-#include <net/ethernet.h>
 
 /* tcpdump header (ether.h) defines  */
 #ifndef ETHER_HDRLEN
@@ -57,15 +56,10 @@ struct sniff_tcp {
 };
 
 struct udp_header {
-
     uint16_t udph_srcport;
-
     uint16_t udph_destport;
-
     uint16_t udph_len;
-
     uint16_t udph_chksum;
-
 };
 
 struct arp_hdr {

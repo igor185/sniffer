@@ -6,12 +6,12 @@
 #include "IO/IO.h"
 #include "Table.h"
 #include "../Details/details.h"
-#include "UI/QHexView.h"
+#include "UI/HexView/QHexView.h"
 #include "../Filters/ProxyModel.h"
 
 
-MainWindow::MainWindow(core::config &config1, QWidget *parent) // TODO rename it
-        : QMainWindow(parent), config(config1), ui(new Ui::Table) {
+MainWindow::MainWindow(config &config, QWidget *parent) // TODO rename it
+        : QMainWindow(parent), configs(config), ui(new Ui::Table) {
     ui->setupUi(this);
 
     proxy_model = new ProxyModel();
@@ -72,8 +72,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::add_to_table(sockets::base_socket *socket) {
-    if (!config.captured) {
-        config.captured = true;
+    if (!configs.captured) {
+        configs.captured = true;
     }
     auto row = socket->to_row();
     mutex.lock();
@@ -121,7 +121,7 @@ MainWindow::get_proxying_data(std::vector<pcap_pkthdr> &pkt_hdr, std::vector<con
     packet.reserve(proxy_model->rowCount());
     for (size_t i = 0; i < proxy_model->rowCount(); i++) {
         auto *elem = data[proxy_model->index(i, 0).data().value<size_t>() - 1];
-        pkt_hdr.push_back({elem->pkt_hdr->ts, elem->len, elem->caplen});
+        pkt_hdr.push_back({elem->pkt_hdr->ts, elem->len, elem->cap_len});
         packet.push_back(elem->packet);
     }
 }

@@ -5,13 +5,9 @@
 
 #include "core/core.h"
 
-//#include "ui_init_page.h"
-//#include "ui_filters.h"
-//#include "ui_table.h"
-//#include "ui_details.h"
 
 namespace UI {
-    int init_gui(int argc, char** argv, core::config& config);
+    int init_gui(int argc, char** argv, config& config);
     void add_to_table(const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
 }
 #endif //SNIFFER_UI_H

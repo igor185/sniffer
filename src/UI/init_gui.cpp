@@ -7,26 +7,26 @@
 #include <QThread>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QToolBar>
 
 #include "UI/UI.h"
 #include "InitPage/InitPage.h"
 #include "Table/Table.h"
-#include <QFileDialog>
-#include <QToolBar>
+
+MainWindow *window1 = nullptr;
 
 class MyThread : public QThread {
 public:
-    explicit MyThread(core::config &conf) : config(conf) {}
+    explicit MyThread(core::sniffer &s) : sniffer(s) {}
 
 protected:
     void run() override {
-        core::init_listening(config);
+        sniffer.start_listen();
     };
 private:
-    core::config &config;
+    core::sniffer& sniffer;
 };
-
-MainWindow *window1 = nullptr; // TODO global var??
 
 void UI::add_to_table(const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
     window1->add_to_table(sockets::parse_packet(nullptr, pkt_hdr, packet));
@@ -34,7 +34,7 @@ void UI::add_to_table(const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
 
 class MainGui : public QMainWindow {
 public:
-    explicit MainGui(core::config &config1) : config(config1) {
+    explicit MainGui(config &config) : configs(config), sniff(config){
         setWindowIcon(QIcon(":images/logo.png"));
         w = new InitPage;
 
@@ -54,17 +54,18 @@ public:
 private:
     InitPage *w;
     MyThread* thread = nullptr;
-    core::config &config;
+    config &configs;
+    core::sniffer sniff;
 
     void init_second_step() {
-        window1 = new MainWindow(config);
+        window1 = new MainWindow(configs);
 
         if (w != nullptr) {
             w->close();
         }
         setCentralWidget(window1);
 
-        thread = new MyThread(config);
+        thread = new MyThread(sniff);
         thread->start();
 
         connect(window1, &MainWindow::pause_sniffer, this, &MainGui::stop_thread);
@@ -73,7 +74,7 @@ private:
 
     void closeEvent(QCloseEvent *event) override {
         QMessageBox::StandardButton resBtn;
-        if (config.captured) {
+        if (configs.captured) {
             resBtn = QMessageBox::question(this, "sniffer",
                                            tr("Save file before exit?\n"),
                                            QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
@@ -82,21 +83,21 @@ private:
                 event->accept();
             } else if (resBtn == QMessageBox::Yes) {
                 event->ignore();
-                if(!config.to_file) {
+                if(!configs.to_file) {
                     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                                     "",
                                                                     tr("Sniffer (*.pcap)"));
-                    config.to_file = true;
+                    configs.to_file = true;
                     int index = fileName.lastIndexOf(".");
                     if(index != -1 && fileName.toStdString().substr(index) == "pcap") {
-                        config.to_file_name = fileName.toStdString() + ".pcap";
+                        configs.to_file_name = fileName.toStdString() + ".pcap";
                     }
                 }
                 std::vector<pcap_pkthdr> pkt_hdr;
                 std::vector<const u_char *> packet;
 
                 window1->get_proxying_data(pkt_hdr, packet);
-                core::write_to_file(config, pkt_hdr, packet);
+                core::write_to_file(configs, pkt_hdr, packet);
                 window1->mutex.unlock();
                 event->accept();
             }
@@ -112,31 +113,38 @@ private:
             }
         }
     }
+
+    void stop(){
+        sniff.pause_listening();
+    }
+
+    void start(){
+        sniff.pause_listening();
+    }
 private slots:
-    static void stop_thread(){
-        core::pause_capturing();
+    void stop_thread(){
+        stop();
     };
 
     void continue_thread(){
-        thread = new MyThread(config);
-        thread->start();
+        start();
     }
 
     void callback(QListWidgetItem *item) {
-        config.device = item->text().toStdString();
+        configs.device = item->text().toStdString();
 
         init_second_step();
     };
 
     void callback_file(QString file) {
-        config.from_file_name = file.toStdString();
-        config.from_file = true;
+        configs.from_file_name = file.toStdString();
+        configs.from_file = true;
 
         init_second_step();
     };
 };
 
-int UI::init_gui(int argc, char **argv, core::config &config) {
+int UI::init_gui(int argc, char **argv, config &config) {
     QApplication app(argc, argv);
 
     MainGui mainGui = MainGui(config);

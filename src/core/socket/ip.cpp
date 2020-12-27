@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "core/core.h"
-#include "IO/IO.h"
+
 
 sockets::ip::ip(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
         ethernet(args, pkt_hdr, packet), ip_ptr((struct sniff_ip *) (packet + SIZE_ETHERNET)) {
@@ -40,7 +40,7 @@ std::string sockets::ip::_get_type() {
             return "IPV6";
 
         default:
-            return "*";
+            return "IP*";
     }
 }
 

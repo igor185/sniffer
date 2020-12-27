@@ -26,7 +26,7 @@ class MainWindow : public QMainWindow
 Q_OBJECT
 
 public:
-    explicit MainWindow(core::config& config1, QWidget *parent = nullptr);
+    explicit MainWindow(config& config1, QWidget *parent = nullptr);
     ~MainWindow() override;
 
     void add_to_table(sockets::base_socket* socket);
@@ -35,7 +35,7 @@ public:
 
     QMutex mutex;
 private:
-    core::config& config;
+    config& configs;
     std::vector<sockets::base_socket *> data;
     Ui::Table *ui;
     ProxyModel* proxy_model;

@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "core/core.h"
+#include "IO/IO.h"
 
 sockets::base_socket* parse_transport(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet,
                                       const std::string &type) {
@@ -33,10 +34,9 @@ sockets::base_socket* parse_network(u_char *args, const struct pcap_pkthdr *pkt_
     return sock;
 }
 
-sockets::base_socket *
-sockets::parse_packet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
+sockets::base_socket* sockets::parse_packet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
     if (pkt_hdr->caplen < ETHER_HDRLEN) {
-        fprintf(stdout, "Packet length less than ethernet header length\n");
+        IO::print_err("Packet length less than ethernet header length");
         return nullptr;
     }
     auto *eth_sock = new ethernet(args, pkt_hdr, packet);
@@ -45,5 +45,6 @@ sockets::parse_packet(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_c
 
     if (sock != nullptr)
         return sock;
+
     return eth_sock;
 }

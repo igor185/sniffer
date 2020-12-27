@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 project(sniffer
         VERSION 1.0.0
-        DESCRIPTION "Add two numbers"
-        HOMEPAGE_URL "https://github.com/chernetskyi/cpp-template"
+        DESCRIPTION "Packet capturing"
+        HOMEPAGE_URL "https://github.com/igor185/sniffer"
         LANGUAGES C CXX)
 
-set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
@@ -26,40 +25,48 @@ option(ENABLE_SANITIZERS    "Use sanitizers to detect errors."      OFF) # Optio
 include(cmake/extra/FindPCAP.cmake)
 
 # Project source compilation
-include_directories(inc)
 include_directories(src)
-add_library(utils STATIC
-        src/utils/utils.cpp src/utils/utils.h src/utils/cli_parser.cpp src/utils/print_payload.cpp src/utils/files.cpp)
 
-add_library(core STATIC
-        src/core/init.cpp
+
+set(utils_list
+        src/utils/utils.cpp
+        src/utils/utils.h
+        src/utils/cli_parser.cpp
+        src/utils/print_payload.cpp
+        src/utils/files.cpp)
+set(core_list
+        src/core/core/init.cpp
         src/core/socket/ethernet.cpp
         src/core/socket/ip.cpp
-        inc/core/core.h
+        src/core/core.h
         src/core/socket/tcp.cpp
-        src/core/handlers.cpp
-        src/core/socket/general.cpp src/core/socket/udp.cpp src/core/socket/arp.cpp inc/core/structs.h)
-
-add_library(IO STATIC
-        src/IO/IO.cpp inc/IO/IO.h)
-
-add_library(UI STATIC
+        src/core/core/handlers.cpp
+        src/core/socket/general.cpp
+        src/core/socket/udp.cpp
+        src/core/socket/arp.cpp
+        src/core/structs.h
+        src/core/sockets.h)
+set(ui_list
         src/UI/InitPage/InitPage.cpp
         src/UI/InitPage/InitPage.h
-        inc/UI/UI.h
+        src/UI/UI.h
         src/UI/init_gui.cpp
         src/UI/Table/Table.h
         src/UI/Table/table.cpp
         src/UI/Details/details.cpp
         src/UI/Details/details.h
-        src/UI/Details/QHexView.cpp
-        inc/UI/QHexView.h
+        src/UI/HexView/QHexView.cpp
+        src/UI/HexView/QHexView.h
         src/UI/Filters/ProxyModel.h
         src/UI/Filters/filters.h
         src/UI/Filters/filters.cpp
         src/UI/Filters/ProxyModel.cpp)
 
-add_library(config STATIC src/config.h)
+add_library(utils STATIC ${utils_list})
+add_library(IO STATIC src/IO/IO.cpp src/IO/IO.h)
+add_library(core STATIC ${core_list})
+add_library(UI STATIC ${ui_list})
+add_library(config STATIC src/config.h src/core/sniffer.cpp)
 
 
 list(APPEND RESOURCES resources/resources.qrc)

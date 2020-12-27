@@ -1,10 +1,10 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
+#include <cstring>
+
 #include "core/core.h"
 #include "UI/UI.h"
-#include "IO/IO.h"
-#include <cstring>
 
 
 void core::console_handler(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
@@ -26,10 +26,10 @@ void core::file_handler(u_char *dumpfile, const struct pcap_pkthdr *pkt_hdr, con
 }
 
 void core::ui_handler(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
-    UI::add_to_table(pkt_hdr, packet);
+    UI::add_to_table(pkt_hdr, packet); // TODO remove UI from this file
 }
 
-void core::write_to_file(core::config& config, std::vector<pcap_pkthdr> &pkt_hdr, std::vector<const u_char *> &packet) {
+void core::write_to_file(config& config, std::vector<pcap_pkthdr> &pkt_hdr, std::vector<const u_char *> &packet) {
     pcap_t* dsc = pcap_open_dead(DLT_EN10MB, 65536);
     pcap_dumper_t *dumpfile = pcap_dump_open(dsc, config.to_file_name.c_str());
     for(size_t i = 0; i< pkt_hdr.size(); i++){

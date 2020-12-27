@@ -8,8 +8,8 @@
 #include "IO/IO.h"
 
 
-core::config utils::cli_parser(int argc, char **argv) {
-    core::config config = {};
+config utils::cli_parser(int argc, char **argv) {
+    config config = {};
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             IO::print_help();
