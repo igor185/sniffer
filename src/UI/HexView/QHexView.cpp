@@ -19,7 +19,6 @@ const int GAP_ADR_HEX = 10;
 const int GAP_HEX_ASCII = 16;
 const int BYTES_PER_LINE = 16;
 
-
 QHexView::QHexView(QWidget *parent):
         QAbstractScrollArea(parent),
         m_pdata(NULL)

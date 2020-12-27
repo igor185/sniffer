@@ -5,8 +5,12 @@
 
 #include "config.h"
 #include <pcap.h>
+#include <sstream>
 
 namespace sockets {
+
+    std::ostream& hex_dump(std::stringstream & os, const char *buffer,
+                           std::size_t bufsize, bool showPrintableChars = true);
 
     struct table_view {
         std::string source;
@@ -32,7 +36,12 @@ namespace sockets {
         };
 
         table_view to_row() {
-            return _to_row();
+            auto view = _to_row();
+            std::stringstream ss;
+            hex_dump(ss, (const char *)packet, pkt_hdr->len);
+
+            view.info = ss.str();
+            return view;
         }
 
         std::vector<detail_view> to_view() {

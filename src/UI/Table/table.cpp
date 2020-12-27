@@ -36,7 +36,7 @@ MainWindow::MainWindow(config &config, QWidget *parent) // TODO rename it
     model->setHeaderData(2, Qt::Horizontal, tr("Destination"), Qt::DisplayRole);
     model->setHeaderData(3, Qt::Horizontal, tr("Length"), Qt::DisplayRole);
     model->setHeaderData(4, Qt::Horizontal, tr("Protocol"), Qt::DisplayRole);
-//    model->setHeaderData(5, Qt::Horizontal, tr("Info"), Qt::DisplayRole);
+    model->setHeaderData(5, Qt::Horizontal, tr("Info"), Qt::DisplayRole);
 
     connect(ui->tableView->model(), SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(addItem()));
     connect(ui->tableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex &)));
@@ -84,7 +84,7 @@ void MainWindow::add_to_table(sockets::base_socket *socket) {
     items.append(new QStandardItem(row.destination.c_str()));
     items.append(new QStandardItem(QString("%1").arg(row.size)));
     items.append(new QStandardItem(row.protocol.c_str()));
-//    items.append(new QStandardItem(row.info.c_str()));
+    items.append(new QStandardItem(row.info.c_str()));
 
     model->appendRow(items);
     proxy_model->data.push_back(socket);
@@ -103,7 +103,7 @@ void MainWindow::on_doubleClick(const QModelIndex &index) {
     auto *socket = proxy_model->data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
     auto details_view = socket->to_view();
 
-    QByteArray array((const char *)socket->packet, socket->pkt_hdr->len);
+    QByteArray array((const char *)socket->packet, socket->len);
 
     auto *phexView = new QHexView;
 

@@ -68,3 +68,16 @@ void core::sniffer::init_listening_offline() {
         pcap_loop(dumpfile, configs.amount, &core::console_handler, nullptr);
     }
 }
+
+std::ostream& sockets::hex_dump(std::stringstream & os, const char *buffer,
+                       std::size_t bufsize, bool showPrintableChars)
+{
+    for(size_t i = 0; i < bufsize; i++){
+        if(isalnum(buffer[i])){
+            os << buffer[i];
+        }else {
+            os << ".";
+        }
+    }
+    return os;
+}

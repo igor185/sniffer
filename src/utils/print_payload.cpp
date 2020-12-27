@@ -1,6 +1,7 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
+#include <sstream>
 #include "utils/utils.h"
 
 void
@@ -8,7 +9,7 @@ print_hex_ascii_line(const u_char *payload, int len, int offset);
 
 void
 utils::print_payload(const u_char *payload, int len) {
-
+    std::stringstream ss;
     int len_rem = len;
     int line_width = 16;            /* number of bytes per line */
     int line_len;
