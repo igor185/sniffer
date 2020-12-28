@@ -19,11 +19,11 @@ void IO::print_help() {
           "[-h| --help] - print this message \n"
           "[-d| --device name] - use some device to listen\n"
           "[-f| --file name] - redirect to file in specific format \n"
-          "[-ff| --from-file name] - output file"
-          "[-a| --amount number] - number of packages to handle (-1 - without limit)"
-          "[-o| --out] - write to file and stdio (if --file present)"
-          "[-c| --console] - print into stdout (gui by default)"
-          "[-p| --protocol name] - to filter using protocol name(doesn't work for reading from file TODO)");
+          "[-ff| --from-file name] - output file \n"
+          "[-a| --amount number] - number of packages to handle (-1 - without limit) \n"
+          "[-o| --out] - write to file and stdio (if --file present) \n"
+          "[-c| --console] - print into stdout (gui by default) \n"
+          "[-p| --protocol name] - to filter using protocol name(doesn't work for reading from file)");
 
     exit(EXIT_SUCCESS);
 }

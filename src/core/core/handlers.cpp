@@ -6,15 +6,21 @@
 #include "core/core.h"
 #include "UI/UI.h"
 
+int count = 0;
 
+void core::control_handler(int s) {
+    printf("\nCaptured: %d\n", count);
+    exit(EXIT_SUCCESS);
+}
 void core::console_handler(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
     sockets::base_socket *sk = sockets::parse_packet(args, pkt_hdr, packet);
-
+    count++;
     if (sk != nullptr)
         sk->print();
 }
 
 void core::file_handler(u_char *dumpfile, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
+    count++;
     pcap_pkthdr pktHdr{};
     pktHdr.caplen = pkt_hdr->caplen;
     pktHdr.len = pkt_hdr->len;

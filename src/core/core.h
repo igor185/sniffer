@@ -15,7 +15,7 @@
 #include "core/sockets.h"
 
 namespace core {
-
+    void control_handler(int s);
     class sniffer {
     public:
 

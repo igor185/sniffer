@@ -25,7 +25,7 @@ protected:
         sniffer.start_listen();
     };
 private:
-    core::sniffer& sniffer;
+    core::sniffer &sniffer;
 };
 
 void UI::add_to_table(const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
@@ -34,7 +34,7 @@ void UI::add_to_table(const struct pcap_pkthdr *pkt_hdr, const u_char *packet) {
 
 class MainGui : public QMainWindow {
 public:
-    explicit MainGui(config &config) : configs(config), sniff(config){
+    explicit MainGui(config &config) : configs(config), sniff(config) {
         setWindowIcon(QIcon(":images/logo.png"));
         w = new InitPage;
 
@@ -53,7 +53,7 @@ public:
 
 private:
     InitPage *w;
-    MyThread* thread = nullptr;
+    MyThread *thread = nullptr;
     config &configs;
     core::sniffer sniff;
 
@@ -83,15 +83,12 @@ private:
                 event->accept();
             } else if (resBtn == QMessageBox::Yes) {
                 event->ignore();
-                if(!configs.to_file) {
+                if (!configs.to_file) {
                     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                                     "",
                                                                     tr("Sniffer (*.pcap)"));
                     configs.to_file = true;
-                    int index = fileName.lastIndexOf(".");
-                    if(index != -1 && fileName.toStdString().substr(index) == "pcap") {
-                        configs.to_file_name = fileName.toStdString() + ".pcap";
-                    }
+                    configs.to_file_name = fileName.toStdString() + ".pcap";
                 }
                 std::vector<pcap_pkthdr> pkt_hdr;
                 std::vector<const u_char *> packet;
@@ -115,29 +112,30 @@ private:
         }
     }
 
-    void stop(){
+    void stop() {
         sniff.pause_listening();
         thread->exit();
     }
 
-    void start(){
+    void start() {
         thread->start();
     }
 
-    void close_s(){
+    void close_s() {
         sniff.close();
     }
 
 private slots:
-    void stop_thread(){
+
+    void stop_thread() {
         stop();
     };
 
-    void continue_thread(){
+    void continue_thread() {
         start();
     }
 
-    void close_sniffer(){
+    void close_sniffer() {
         close_s();
     }
 
