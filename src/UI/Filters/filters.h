@@ -13,7 +13,6 @@
 #include <QComboBox>
 
 
-
 enum Types {
     Source = 0,
     Destination,
@@ -30,7 +29,7 @@ class Filter : public QWidget {
 Q_OBJECT
 
 public:
-    explicit Filter(int type = Logic::And);
+    explicit Filter(QVBoxLayout* layout_parent, int type = Logic::And);
 
     QWidget* draw();
 
@@ -43,11 +42,15 @@ public:
     Logic connect_with_prev;
     QString value;
     QPushButton *addButton;
+    QVBoxLayout* layout;
+    QWidget * res = new QWidget;
 private slots:
     void on_lineEdit_textChanged(const QString &new_value);
 
     void on_comboBox_edit(int new_type);
     void on_comboBox2_edit(int new_type);
+
+    void delete_filter();
 private:
     QComboBox *comboBox;
     QComboBox *comboBox2;
@@ -60,5 +63,6 @@ private:
     void fillOptions();
 signals:
         void changed();
+        void remove(Filter*);
 };
 #endif // Filters_H

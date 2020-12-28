@@ -9,7 +9,7 @@
 #include <QSortFilterProxyModel>
 #include "ui_filters.h"
 #include "filters.h"
-
+#include "iostream"
 QT_BEGIN_NAMESPACE
 namespace Ui { class FiltersView; }
 QT_END_NAMESPACE
@@ -42,6 +42,21 @@ private slots:
     void changed(){
         invalidateFilter();
     };
+
+    void remove(Filter* filter){
+        size_t index = -1;
+        for(size_t i = 0; i < primary_filters.size(); i++){
+            if(primary_filters[i] == filter){
+                index = i;
+                break;
+            }
+        }
+        if(index != -1){
+            primary_filters.erase(primary_filters.begin() + index);
+        }
+        delete filter;
+        invalidateFilter();
+    }
 private:
     std::vector<Filter*> primary_filters;
 };

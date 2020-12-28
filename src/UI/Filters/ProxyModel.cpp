@@ -6,7 +6,7 @@
 
 ProxyModel::ProxyModel(QWidget *parent) : QSortFilterProxyModel(parent){
         primary_filters = {};
-        auto* filter = new Filter();
+        auto* filter = new Filter(nullptr);
         primary_filters.push_back(filter);
 
         connect(filter, SIGNAL(changed()), this, SLOT(changed()));

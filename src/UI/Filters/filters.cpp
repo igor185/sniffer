@@ -34,11 +34,12 @@ FiltersView::~FiltersView()
 }
 
 void FiltersView::addFilter(Logic type) {
-    auto* filter = new Filter(type);
+    auto* filter = new Filter(ui->verticalLayout_2, type);
     proxy->add_filter(filter);
     ui->verticalLayout_2->addWidget(filter->draw());
 
     connect(filter, SIGNAL(changed()), proxy, SLOT(changed()));
+    connect(filter, SIGNAL(remove(Filter*)), proxy, SLOT(remove(Filter*)));
 }
 
 void FiltersView::handleAnd() {
@@ -50,6 +51,7 @@ void FiltersView::handleOr() {
 }
 
 void Filter::draw(QHBoxLayout *layout) {
+//    layout_for_remove = layout;
     comboBox_ = new QComboBox(this);
     comboBox2_ = new QComboBox(this);
 
@@ -138,6 +140,7 @@ QWidget *Filter::draw() {
     auto layout_h = new QHBoxLayout(this);
     if(lineEdit_ == nullptr) {
         layout_h->addWidget(addButton);
+        connect(addButton, SIGNAL(clicked(bool)), this, SLOT(delete_filter()));
     }
     connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(on_lineEdit_textChanged(const QString &)));
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_comboBox_edit(int)));
@@ -159,15 +162,15 @@ QWidget *Filter::draw() {
     layout_v->addWidget(label);
     layout_v->addWidget(w);
 
-    auto* res = new QWidget;
     res->setLayout(layout_v);
 
     fillOptions();
 
     return res;
 }
-
-Filter::Filter(int connected) {
+// FiltersView* view,
+Filter::Filter(QVBoxLayout* layout_parent, int connected) {
+    layout = layout_parent;
     type = static_cast<Types>(Types::Protocol + 1);
     connect_with_prev = static_cast<Logic>(connected);
 
@@ -243,3 +246,9 @@ void Filter::on_comboBox2_edit(int new_type) {
 }
 
 
+void Filter::delete_filter() {
+    if(layout != nullptr){
+        delete res;
+        emit remove(this);
+    }
+}

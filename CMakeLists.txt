@@ -45,7 +45,8 @@ set(core_list
         src/core/socket/udp.cpp
         src/core/socket/arp.cpp
         src/core/structs.h
-        src/core/sockets.h src/core/socket/icmp.cpp)
+        src/core/sockets.h
+        src/core/socket/icmp.cpp)
 set(ui_list
         src/UI/InitPage/InitPage.cpp
         src/UI/InitPage/InitPage.h
@@ -63,8 +64,8 @@ set(ui_list
         src/UI/Filters/ProxyModel.cpp)
 
 add_library(utils STATIC ${utils_list})
-add_library(IO STATIC src/IO/IO.cpp src/IO/IO.h)
 add_library(core STATIC ${core_list})
+add_library(IO STATIC src/IO/IO.cpp src/IO/IO.h)
 add_library(UI STATIC ${ui_list})
 add_library(config STATIC src/config.h src/core/sniffer.cpp)
 
