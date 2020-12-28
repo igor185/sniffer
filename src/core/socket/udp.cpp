@@ -37,7 +37,10 @@ sockets::table_view sockets::udp::_to_row() {
     view.destination = std::to_string(ntohs(udp_ptr->udph_destport));
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + sizeof(udp_header) + (const char *)packet, pkt_hdr->len);
 
+    view.info = ss.str();
 
     return view;
 }

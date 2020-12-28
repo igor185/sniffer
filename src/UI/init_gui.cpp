@@ -100,6 +100,7 @@ private:
                 core::write_to_file(configs, pkt_hdr, packet);
                 window1->mutex.unlock();
                 event->accept();
+                close_s();
             }
         } else {
             resBtn = QMessageBox::question(this, "sniffer",
@@ -116,11 +117,17 @@ private:
 
     void stop(){
         sniff.pause_listening();
+        thread->exit();
     }
 
     void start(){
-        sniff.pause_listening();
+        thread->start();
     }
+
+    void close_s(){
+        sniff.close();
+    }
+
 private slots:
     void stop_thread(){
         stop();
@@ -128,6 +135,10 @@ private slots:
 
     void continue_thread(){
         start();
+    }
+
+    void close_sniffer(){
+        close_s();
     }
 
     void callback(QListWidgetItem *item) {

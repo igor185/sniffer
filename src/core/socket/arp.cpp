@@ -39,6 +39,12 @@ sockets::table_view sockets::arp::_to_row() {
     struct sockets::table_view view = ip::_to_row();
     view.protocol = _get_type();
 
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + sizeof(arp_hdr) + (const char *)packet, pkt_hdr->len);
+
+    view.info = ss.str();
+
+
     return view;
 }
 

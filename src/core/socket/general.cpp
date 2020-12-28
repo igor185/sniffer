@@ -12,6 +12,8 @@ sockets::base_socket* parse_transport(u_char *args, const struct pcap_pkthdr *pk
         return new sockets::tcp(args, pkt_hdr, packet);
     }else if(type == "UDP"){
         return new sockets::udp(args, pkt_hdr, packet);
+    } else if(type == "ICMP"){
+        return new sockets::icmp(args, pkt_hdr, packet);
     }
     return sock;
 }

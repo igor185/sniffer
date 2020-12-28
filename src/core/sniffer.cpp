@@ -3,14 +3,11 @@
 
 #include "core/core.h"
 #include "IO/IO.h"
+#include "sockets.h"
+
 
 void core::sniffer::pause_listening() {
-    if (is_listen) {
-        pcap_breakloop(device);
-        is_listen = false;
-    } else {
-        start_listen();
-    }
+    pcap_breakloop(device);
 }
 
 void core::sniffer::start_listen() {
@@ -24,11 +21,12 @@ void core::sniffer::start_listen() {
 
 void core::sniffer::init_listening_online() {
     struct bpf_program fp{};
-
-    device = pcap_open_live(configs.device.c_str(), BUFSIZ, 1, -1, err_buf);
-    if (device == nullptr) {
-        IO::print_err(err_buf);
-        return;
+    if(device == nullptr) {
+        device = pcap_open_live(configs.device.c_str(), BUFSIZ, 1, -1, err_buf);
+        if (device == nullptr) {
+            IO::print_err(err_buf);
+            return;
+        }
     }
 
     if (!configs.protoc_filter.empty()) {
@@ -56,7 +54,6 @@ void core::sniffer::init_listening_online() {
 void core::sniffer::init_listening_offline() {
     pcap_t *dumpfile = pcap_open_offline(configs.from_file_name.c_str(), err_buf);
 
-    IO::print_err(err_buf); // TODO
     if (dumpfile == nullptr) {
         IO::print(err_buf);
         exit(EXIT_FAILURE);
@@ -69,8 +66,14 @@ void core::sniffer::init_listening_offline() {
     }
 }
 
+void core::sniffer::close() {
+    if(device != nullptr){
+        pcap_close(device);
+    }
+}
+
 std::ostream& sockets::hex_dump(std::stringstream & os, const char *buffer,
-                       std::size_t bufsize, bool showPrintableChars)
+                       std::size_t bufsize)
 {
     for(size_t i = 0; i < bufsize; i++){
         if(isalnum(buffer[i])){

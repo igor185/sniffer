@@ -45,7 +45,7 @@ set(core_list
         src/core/socket/udp.cpp
         src/core/socket/arp.cpp
         src/core/structs.h
-        src/core/sockets.h)
+        src/core/sockets.h src/core/socket/icmp.cpp)
 set(ui_list
         src/UI/InitPage/InitPage.cpp
         src/UI/InitPage/InitPage.h

@@ -84,7 +84,7 @@ void MainWindow::add_to_table(sockets::base_socket *socket) {
     items.append(new QStandardItem(row.destination.c_str()));
     items.append(new QStandardItem(QString("%1").arg(row.size)));
     items.append(new QStandardItem(row.protocol.c_str()));
-    items.append(new QStandardItem(row.info.c_str()));
+//    items.append(new QStandardItem(row.info.c_str()));
 
     model->appendRow(items);
     proxy_model->data.push_back(socket);

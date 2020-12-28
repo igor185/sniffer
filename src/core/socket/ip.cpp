@@ -5,7 +5,7 @@
 
 
 sockets::ip::ip(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
-        ethernet(args, pkt_hdr, packet), ip_ptr((struct sniff_ip *) (packet + SIZE_ETHERNET)) {
+        ethernet(args, pkt_hdr, packet), ip_ptr((struct  sniff_ip*) (packet + SIZE_ETHERNET)) {
 }
 
 std::string sockets::ip::_get_type() {
@@ -66,7 +66,7 @@ std::vector<sockets::detail_view> sockets::ip::_to_view() {
     view.properties = {};
 
     view.properties.emplace_back("Source", inet_ntoa(ip_ptr->ip_src));
-    view.properties.emplace_back("Destination", inet_ntoa(ip_ptr->ip_src));
+    view.properties.emplace_back("Destination", inet_ntoa(ip_ptr->ip_dst));
     view.properties.emplace_back("Header size", std::to_string(ip_ptr->ip_vhl >> 2));
     view.properties.emplace_back("Total length", std::to_string(ip_ptr->ip_len));
     view.properties.emplace_back("Flag", get_flag(ip_ptr->ip_off));
@@ -82,10 +82,13 @@ std::vector<sockets::detail_view> sockets::ip::_to_view() {
 sockets::table_view sockets::ip::_to_row() {
     struct sockets::table_view view;
     view.source = inet_ntoa(ip_ptr->ip_src);
-    view.destination = inet_ntoa(ip_ptr->ip_src);
+    view.destination = inet_ntoa(ip_ptr->ip_dst);
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + (const char *)packet, pkt_hdr->len);
 
+    view.info = ss.str();
 
     return view;
 }
@@ -106,7 +109,7 @@ std::string sockets::ip::destination_layer_(int type) {
         case Physic:
             return ethernet::destination_layer_(type);
         case Network:
-            return inet_ntoa(ip_ptr->ip_src);
+            return inet_ntoa(ip_ptr->ip_dst);
         default:
             return "";
     }
@@ -115,7 +118,7 @@ std::string sockets::ip::destination_layer_(int type) {
 std::string sockets::ip::protocol_layer_(int type) {
     switch (type - 1) {
         case Physic:
-            return "ethernet";
+            return "Ethernet";
         case Network:
             return "IPv4";
         default:

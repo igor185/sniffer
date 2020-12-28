@@ -6,17 +6,18 @@
 #include "config.h"
 #include <pcap.h>
 #include <sstream>
+#include <linux/icmp.h>
 
 namespace sockets {
 
     std::ostream& hex_dump(std::stringstream & os, const char *buffer,
-                           std::size_t bufsize, bool showPrintableChars = true);
+                           std::size_t bufsize);
 
     struct table_view {
         std::string source;
         std::string destination;
         std::string protocol;
-        std::string info; // TODO add it
+        std::string info;
         unsigned int size;
     };
 
@@ -36,12 +37,7 @@ namespace sockets {
         };
 
         table_view to_row() {
-            auto view = _to_row();
-            std::stringstream ss;
-            hex_dump(ss, (const char *)packet, pkt_hdr->len);
-
-            view.info = ss.str();
-            return view;
+            return _to_row();
         }
 
         std::vector<detail_view> to_view() {
@@ -181,5 +177,25 @@ namespace sockets {
     private:
         const struct arp_hdr *arp_ptr;
     };
+
+    class icmp : public ip {
+    public:
+        icmp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet);
+
+    protected:
+        std::string _get_type() override;
+
+        std::vector<sockets::detail_view> _to_view() override;
+
+        sockets::table_view _to_row() override;
+
+        std::string source_layer_(int type) override;
+        std::string destination_layer_(int type) override;
+        std::string protocol_layer_(int type) override;
+
+    private:
+        const struct icmphdr *icmp_hdr;
+    };
+
 }
 #endif //SNIFFER_SOCKETS_H

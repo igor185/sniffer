@@ -15,6 +15,10 @@ sockets::table_view sockets::ethernet::_to_row() {
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
 
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + (const char *)packet, pkt_hdr->len);
+
+    view.info = ss.str();
 
     return view;
 }

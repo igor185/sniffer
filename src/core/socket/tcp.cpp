@@ -59,6 +59,10 @@ sockets::table_view sockets::tcp::_to_row() {
     view.destination = std::to_string(ntohs(tcp_ptr->th_dport));
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + sizeof(sniff_tcp) + (const char *)packet, pkt_hdr->len);
+
+    view.info = ss.str();
 
 
     return view;

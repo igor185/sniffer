@@ -23,6 +23,8 @@ namespace core {
 
         void pause_listening();
 
+        void close();
+
         explicit sniffer(config& config): configs(config){}
     protected:
         void init_listening_offline();
