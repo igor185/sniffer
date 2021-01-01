@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
     sigaction(SIGINT, &sigIntHandler, nullptr);
 
-    config.device = "enx00e04c360457"; // TODO
+    config.device = "wlp3s0";
 
     core::sniffer sniffer(config);
 

@@ -1,13 +1,16 @@
-# Lab 2 Option 3: Adder
+# Sniffer
 
+   Final project in OS course. Sniffer for traffic capturing. Based on libpcap for capture packages and Qt for viewing and analysing them. Support gui and cli 
 ## Team
 
- - [Volodymyr Chernetskyi](https://github.com/chernetskyi)
+ - [Igor Babin](https://github.com/igor185)
 
 ## Prerequisites
 
  - **C++ compiler** - needs to support **C++17** standard
- - **CMake** 3.15+
+ - **CMake** 3.14+
+ - **libpcap** 
+ - **Qt**
  
 Dependencies (such as development libraries) can be found in the [dependencies folder](./dependencies) in the form of the text files with package names for different package managers.
 
@@ -15,7 +18,7 @@ Dependencies (such as development libraries) can be found in the [dependencies f
 
 1. Clone the project.
     ```bash
-    git clone git@github.com:chernetskyi/cpp-template.git
+    git clone git@github.com:igor185/sniffer.git
     ```
 2. Install required packages.
 
@@ -30,16 +33,11 @@ Dependencies (such as development libraries) can be found in the [dependencies f
    Use Conan on Windows.
 3. Build.
     ```bash
-    cmake -Bbuild
-    cmake --build build
+    make build && cd build && cmake .. && make
     ```
 
 ## Usage
 
 ```bash
-add [a] [b]
+sudo ./sniffer --help
 ```
-
-If less than two numbers provided, zeroes are used instead. If more - an error occurs.
-
-Help flags `-h`/`--help` support is available.

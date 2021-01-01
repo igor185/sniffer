@@ -20,7 +20,6 @@ InitPage::InitPage(QWidget *parent)
         l.append(QString(dev.c_str()));
     }
 
-
     ui->listWidget->addItems(l);
     this->setStyleSheet("QListWidget::item:hover {background-color:#095CF4; color: white;}");
 
