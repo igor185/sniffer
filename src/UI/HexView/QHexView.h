@@ -4,6 +4,7 @@
 #include <QAbstractScrollArea>
 #include <QByteArray>
 #include <QFile>
+#include <iomanip>
 
 class QHexView: public QAbstractScrollArea
 

@@ -4,39 +4,27 @@
 #include <QMainWindow>
 
 #include "IO/IO.h"
-#include "UI/Table.h"
-#include "UI/details.h"
-#include "UI/QHexView.h"
+#include "Table.h"
+#include "../Details/details.h"
+#include "UI/HexView/QHexView.h"
+#include "../Filters/ProxyModel.h"
 
-#include "ui_table.h"
 
-MainWindow::MainWindow(core::config &config1, QWidget *parent) // TODO rename it
-        : QMainWindow(parent), config(config1), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(config &config, QWidget *parent) // TODO rename it
+        : QMainWindow(parent), configs(config), ui(new Ui::Table) {
     ui->setupUi(this);
 
-    comboBox = new QComboBox(this);
-    comboBox->setObjectName(QString::fromUtf8("comboBox"));
-    comboBox->addItem("Source");
-    comboBox->addItem("Destination");
-    comboBox->addItem("Length");
-    comboBox->addItem("Protocol");
-    comboBox->addItem("Info");
-    comboBox->setCurrentIndex(3);
+    proxy_model = new ProxyModel();
 
-    lineEdit = new QLineEdit(this);
-    lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+    Filter* filter = proxy_model->getFirst();
 
-    connect(lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(on_lineEdit_textChanged(const QString &)));
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_comboBox_edit(int)));
-
-    ui->horizontalLayout->addWidget(comboBox);
-    ui->horizontalLayout->addWidget(lineEdit);
+    filter->draw(ui->horizontalLayout);
 
     ui->tableView->verticalHeader()->setVisible(false);
 
     model = new QStandardItemModel(0, 5, ui->tableView);
 
-    proxy_model = new QSortFilterProxyModel();
+
 
     ui->tableView->setModel(proxy_model);
     proxy_model->setSourceModel(model);
@@ -48,7 +36,7 @@ MainWindow::MainWindow(core::config &config1, QWidget *parent) // TODO rename it
     model->setHeaderData(2, Qt::Horizontal, tr("Destination"), Qt::DisplayRole);
     model->setHeaderData(3, Qt::Horizontal, tr("Length"), Qt::DisplayRole);
     model->setHeaderData(4, Qt::Horizontal, tr("Protocol"), Qt::DisplayRole);
-//    model->setHeaderData(5, Qt::Horizontal, tr("Info"), Qt::DisplayRole);
+    model->setHeaderData(5, Qt::Horizontal, tr("Info"), Qt::DisplayRole);
 
     connect(ui->tableView->model(), SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(addItem()));
     connect(ui->tableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex &)));
@@ -58,6 +46,7 @@ MainWindow::MainWindow(core::config &config1, QWidget *parent) // TODO rename it
     ok->setObjectName("continue");
     stop->setObjectName("stop");
     scroll->setObjectName("scroll");
+    setting->setObjectName("settings");
 
     bar->widgetForAction(ok)->setObjectName(ok->objectName());
     bar->widgetForAction(stop)->setObjectName(stop->objectName());
@@ -75,6 +64,7 @@ MainWindow::MainWindow(core::config &config1, QWidget *parent) // TODO rename it
     connect(ok, SIGNAL(triggered(bool)), this, SLOT(pause(bool)));
     connect(stop, SIGNAL(triggered(bool)), this, SLOT(start(bool)));
     connect(scroll, SIGNAL(triggered(bool)), this, SLOT(press_scroll(bool)));
+    connect(setting, SIGNAL(triggered(bool)), this, SLOT(settings_open(bool)));
 }
 
 MainWindow::~MainWindow() {
@@ -82,8 +72,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::add_to_table(sockets::base_socket *socket) {
-    if (!config.captured) {
-        config.captured = true;
+    if (!configs.captured) {
+        configs.captured = true;
     }
     auto row = socket->to_row();
     mutex.lock();
@@ -97,25 +87,23 @@ void MainWindow::add_to_table(sockets::base_socket *socket) {
 //    items.append(new QStandardItem(row.info.c_str()));
 
     model->appendRow(items);
-    data.push_back(socket);
+    proxy_model->data.push_back(socket);
     mutex.unlock();
 }
 
 void MainWindow::on_lineEdit_textChanged(const QString &arg1) {
-    QRegExp regExp(arg1, Qt::CaseInsensitive, QRegExp::Wildcard);
-    proxy_model->setFilterRegExp(regExp);
+    proxy_model->onChangeText(arg1);
 }
 
 void MainWindow::on_comboBox_edit(int index) {
-    proxy_model->setFilterKeyColumn(index + 1);
-    lineEdit->setText("");
+    proxy_model->onChangeField(index);
 }
 
 void MainWindow::on_doubleClick(const QModelIndex &index) {
-    auto *socket = data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
+    auto *socket = proxy_model->data[index.sibling(index.row(), 0).data().value<size_t>() - 1];
     auto details_view = socket->to_view();
 
-    QByteArray array((const char *)socket->packet, socket->pkt_hdr->len);
+    QByteArray array((const char *)socket->packet, socket->len);
 
     auto *phexView = new QHexView;
 
@@ -127,13 +115,13 @@ void MainWindow::on_doubleClick(const QModelIndex &index) {
 }
 
 void
-MainWindow::get_proxying_data(std::vector<const struct pcap_pkthdr *> &pkt_hdr, std::vector<const u_char *> &packet) {
+MainWindow::get_proxying_data(std::vector<pcap_pkthdr> &pkt_hdr, std::vector<const u_char *> &packet) {
     mutex.lock();
     pkt_hdr.reserve(proxy_model->rowCount());
     packet.reserve(proxy_model->rowCount());
     for (size_t i = 0; i < proxy_model->rowCount(); i++) {
-        auto *elem = data[proxy_model->index(i, 0).data().value<size_t>() - 1];
-        pkt_hdr.push_back(elem->pkt_hdr);
+        auto *elem = proxy_model->data[proxy_model->index(i, 0).data().value<size_t>() - 1];
+        pkt_hdr.push_back({elem->pkt_hdr->ts, elem->len, elem->cap_len});
         packet.push_back(elem->packet);
     }
 }
@@ -165,4 +153,12 @@ void MainWindow::press_scroll(bool state) {
         bar->setStyleSheet(
                 "QToolButton#scroll { background:none}");
     }
+}
+
+void MainWindow::settings_open(bool state) {
+
+    filters = new FiltersView(proxy_model, this);
+
+    filters->show();
+
 }

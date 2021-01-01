@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 
 #include "core/core.h"
+#include "ui_init_page.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InitPage; }
@@ -23,11 +24,16 @@ public:
 private:
     Ui::InitPage *ui;
     QStringList l;
+    QStringList file_names;
 signals:
     void callback(QListWidgetItem* item);
+    void callback_file(QString file);
 private slots:
     void callback_slot(QListWidgetItem* item);
+    void callback_slot_file(QListWidgetItem* item);
     void on_lineEdit_textChanged(const QString &arg1);
+    void on_lineEdit_textChanged_file(const QString &arg1);
+    void on_browse();
 };
 
 #endif //SNIFFER_INITPAGE_H

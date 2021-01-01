@@ -1,13 +1,7 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-
-
-#include <core/tcp.h>
 #include <core/core.h>
-#include <IO/IO.h>
-#include <core/udp.h>
-#include "util/utils.h"
 
 
 sockets::udp::udp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
@@ -16,15 +10,6 @@ sockets::udp::udp(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char 
 
 std::string sockets::udp::_get_type() {
     return "UDP";
-}
-
-void sockets::udp::_print() {
-    if (pkt_hdr != nullptr && udp_ptr != nullptr) {
-        IO::print(utils::get_time(pkt_hdr->ts) + " " +
-                  get_type() + " " +
-                  std::to_string(ntohs(udp_ptr->udph_srcport)) + " -> " +
-                  std::to_string(ntohs(udp_ptr->udph_destport)) + " " + std::to_string(pkt_hdr->len - SIZE_ETHERNET)); // TODO size
-    }
 }
 
 std::vector<sockets::detail_view> sockets::udp::_to_view() {
@@ -52,7 +37,46 @@ sockets::table_view sockets::udp::_to_row() {
     view.destination = std::to_string(ntohs(udp_ptr->udph_destport));
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + sizeof(udp_header) + (const char *)packet, pkt_hdr->len);
 
+    view.info = ss.str();
 
     return view;
+}
+
+std::string sockets::udp::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::source_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(udp_ptr->udph_srcport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::udp::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::destination_layer_(type);
+        case Transport:
+            return std::to_string(ntohs(udp_ptr->udph_destport));
+        default:
+            return "";
+    }
+}
+
+std::string sockets::udp::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+        case Network:
+            return sockets::ip::protocol_layer_(type);
+        case Transport:
+            return "UDP";
+        default:
+            return "";
+    }
 }

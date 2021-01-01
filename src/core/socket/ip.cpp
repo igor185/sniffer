@@ -1,28 +1,11 @@
 // This is an open source non-commercial project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-
-
 #include "core/core.h"
-#include <core/ip.h>
-#include "util/utils.h"
-#include "IO/IO.h"
+
 
 sockets::ip::ip(u_char *args, const struct pcap_pkthdr *pkt_hdr, const u_char *packet) :
-        ethernet(args, pkt_hdr, packet), ip_ptr((struct sniff_ip *) (packet + SIZE_ETHERNET)) {
-}
-
-void sockets::ip::_print() {
-    if (pkt_hdr != nullptr && ip_ptr != nullptr) {
-        IO::print(utils::get_time(pkt_hdr->ts) + " " +
-                  get_type() + " " +
-                  inet_ntoa(ip_ptr->ip_src) + " -> " +
-                  // TODO change to inet_ntop(AF_INET, &(ipHeader->ip_dst), destIp, INET_ADDRSTRLEN);
-                  inet_ntoa(ip_ptr->ip_dst) + " " + std::to_string(pkt_hdr->len - SIZE_ETHERNET));
-
-        int ip_size = IP_HL(ip_ptr) * 4;
-        utils::print_payload((u_char *) (packet + SIZE_ETHERNET + ip_size), ntohs(ip_ptr->ip_len) - ip_size);
-    }
+        ethernet(args, pkt_hdr, packet), ip_ptr((struct  sniff_ip*) (packet + SIZE_ETHERNET)) {
 }
 
 std::string sockets::ip::_get_type() {
@@ -57,7 +40,7 @@ std::string sockets::ip::_get_type() {
             return "IPV6";
 
         default:
-            return "*";
+            return "IP*";
     }
 }
 
@@ -83,7 +66,7 @@ std::vector<sockets::detail_view> sockets::ip::_to_view() {
     view.properties = {};
 
     view.properties.emplace_back("Source", inet_ntoa(ip_ptr->ip_src));
-    view.properties.emplace_back("Destination", inet_ntoa(ip_ptr->ip_src));
+    view.properties.emplace_back("Destination", inet_ntoa(ip_ptr->ip_dst));
     view.properties.emplace_back("Header size", std::to_string(ip_ptr->ip_vhl >> 2));
     view.properties.emplace_back("Total length", std::to_string(ip_ptr->ip_len));
     view.properties.emplace_back("Flag", get_flag(ip_ptr->ip_off));
@@ -99,10 +82,46 @@ std::vector<sockets::detail_view> sockets::ip::_to_view() {
 sockets::table_view sockets::ip::_to_row() {
     struct sockets::table_view view;
     view.source = inet_ntoa(ip_ptr->ip_src);
-    view.destination = inet_ntoa(ip_ptr->ip_src);
+    view.destination = inet_ntoa(ip_ptr->ip_dst);
     view.protocol = _get_type();
     view.size = pkt_hdr->len;
+    std::stringstream ss;
+    hex_dump(ss, sizeof (ether_header) + sizeof(sniff_ip) + (const char *)packet, pkt_hdr->len);
 
+    view.info = ss.str();
 
     return view;
+}
+
+std::string sockets::ip::source_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return ethernet::source_layer_(type);
+        case Network:
+            return inet_ntoa(ip_ptr->ip_src);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::ip::destination_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return ethernet::destination_layer_(type);
+        case Network:
+            return inet_ntoa(ip_ptr->ip_dst);
+        default:
+            return "";
+    }
+}
+
+std::string sockets::ip::protocol_layer_(int type) {
+    switch (type - 1) {
+        case Physic:
+            return "Ethernet";
+        case Network:
+            return "IPv4";
+        default:
+            return "";
+    }
 }
