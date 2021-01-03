@@ -61,6 +61,7 @@ private:
     QLineEdit *lineEdit_ = nullptr;
 
     void fillOptions();
+    void init();
 signals:
         void changed();
         void remove(Filter*);

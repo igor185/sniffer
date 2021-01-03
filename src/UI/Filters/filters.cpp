@@ -139,6 +139,7 @@ void Filter::on_comboBox_edit(int new_type) {
 QWidget *Filter::draw() {
     auto layout_h = new QHBoxLayout(this);
     if(lineEdit_ == nullptr) {
+        init();
         layout_h->addWidget(addButton);
         connect(addButton, SIGNAL(clicked(bool)), this, SLOT(delete_filter()));
     }
@@ -168,12 +169,8 @@ QWidget *Filter::draw() {
 
     return res;
 }
-// FiltersView* view,
-Filter::Filter(QVBoxLayout* layout_parent, int connected) {
-    layout = layout_parent;
-    type = static_cast<Types>(Types::Protocol + 1);
-    connect_with_prev = static_cast<Logic>(connected);
 
+void Filter::init(){
     addButton = new QPushButton(QIcon(":images/stop.png"),"");
     QString buttonStyle = "QPushButton{border:none;}";
     addButton->setStyleSheet(buttonStyle);
@@ -194,6 +191,14 @@ Filter::Filter(QVBoxLayout* layout_parent, int connected) {
 
     lineEdit = new QLineEdit(this);
     lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+}
+// FiltersView* view,
+Filter::Filter(QVBoxLayout* layout_parent, int connected) {
+    layout = layout_parent;
+    type = static_cast<Types>(Types::Protocol + 1);
+    connect_with_prev = static_cast<Logic>(connected);
+
+    init();
 }
 
 void Filter::fillOptions() {
