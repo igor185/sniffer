@@ -34,7 +34,7 @@ Dependencies (such as development libraries) can be found in the [dependencies f
    Use Conan on Windows.
 3. Build.
     ```bash
-    make build && cd build && cmake .. && make
+    mkdir build && cd build && cmake .. && make
     ```
 
 ### Usage
