@@ -1,5 +1,7 @@
 # Sniffer
    Final project in OS course. Sniffer for traffic capturing. Based on libpcap for capture packages and Qt for viewing and analysing them. Support gui and cli 
+   
+[Presentation](https://docs.google.com/presentation/d/1aZNA1V-maiUlzM3WgJ0VxryYUfSIsPxvs6D6yXfR8DY/edit?usp=sharing)
 ### Team
 
  - [Igor Babin](https://github.com/igor185)
